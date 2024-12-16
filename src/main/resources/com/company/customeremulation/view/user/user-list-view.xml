@@ -35,11 +35,11 @@
             <button id="removeButton" action="usersDataGrid.remove"/>
             <button id="showRoleAssignmentsButton" action="usersDataGrid.showRoleAssignments"/>
             <dropdownButton id="additionalButton" text="msg://additionalMenu" icon="COG">
-                <items>
+                <itemDtos>
                     <actionItem id="changePasswordItem" ref="usersDataGrid.changePassword"/>
                     <actionItem id="resetPasswordItem" ref="usersDataGrid.resetPassword"/>
                     <actionItem id="showUserSubstitutionsItem" ref="usersDataGrid.showUserSubstitutions"/>
-                </items>
+                </itemDtos>
             </dropdownButton>
             <simplePagination id="pagination" dataLoader="usersDl"/>
         </hbox>

@@ -46,6 +46,16 @@ dependencies {
     implementation 'io.jmix.restds:jmix-restds-starter'
     implementation 'io.jmix.rest:jmix-rest-starter'
     implementation 'io.jmix.authserver:jmix-authserver-starter'
+
+    implementation 'org.json:json:20240303'
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.18.2'
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+    implementation 'com.rabbitmq:amqp-client:5.22.0'
+
+    implementation 'fr.dudie:nominatim-api:3.4'
+
 }
 
 configurations.implementation {

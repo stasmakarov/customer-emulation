@@ -1,6 +1,6 @@
 package com.company.customeremulation.view.item;
 
-import com.company.customeremulation.entity.Item;
+import com.company.customeremulation.entity.ItemDto;
 import com.company.customeremulation.view.main.MainView;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.LoadContext;
@@ -13,10 +13,10 @@ import java.util.Set;
 @ViewController(id = "cst_Item.detail")
 @ViewDescriptor(path = "item-detail-view.xml")
 @EditedEntityContainer("itemDc")
-public class ItemDetailView extends StandardDetailView<Item> {
+public class ItemDetailView extends StandardDetailView<ItemDto> {
 
     @Install(to = "itemDl", target = Target.DATA_LOADER)
-    private Item customerDlLoadDelegate(final LoadContext<Item> loadContext) {
+    private ItemDto customerDlLoadDelegate(final LoadContext<ItemDto> loadContext) {
         Object id = loadContext.getId();
         // Here you can load the entity by id from an external storage.
         // Set the loaded entity to the not-new state using EntityStates.setNew(entity, false).
@@ -25,12 +25,12 @@ public class ItemDetailView extends StandardDetailView<Item> {
 
     @Install(target = Target.DATA_CONTEXT)
     private Set<Object> saveDelegate(final SaveContext saveContext) {
-        Item entity = getEditedEntity();
+        ItemDto entity = getEditedEntity();
         // Here you can save the entity to an external storage and return the saved instance.
         // Set the returned entity to the not-new state using EntityStates.setNew(entity, false).
         // If the new entity ID is assigned by the storage, set the ID to the original instance too 
         // to let the framework match the saved instance with the original one.
-        Item saved = entity;
+        ItemDto saved = entity;
         return Set.of(saved);
     }
 }

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://demoView.title">
+    <layout>
+        <vbox>
+            <vbox>
+                <h5 text="Orders Generation"/>
+                <hbox>
+                    <button id="startBtn" text="Start generation"/>
+                    <button id="stopBtn" text="Stop generation"/>
+                </hbox>
+            </vbox>
+            <vbox visible="false">
+                <h5 text="Demo &amp; Testing"/>
+                <textField id="numberField" datatype="int" label="Number of Customers"/>
+                <button id="genBtn" text="Generate customers"/>
+                <hbox>
+                    <button id="orderBtn" text="Generate order"/>
+                    <button id="sendOrderBtn" text="Send order"/>
+                </hbox>
+            </vbox>
+        </vbox>
+    </layout>
+</view>

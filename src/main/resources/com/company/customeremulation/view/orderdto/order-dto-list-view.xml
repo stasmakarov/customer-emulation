@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://orderDtoListView.title"
+      focusComponent="orderDtoesDataGrid">
+    <data>
+        <collection id="orderDtoesDc"
+                    class="com.company.customeremulation.entity.OrderDto">
+            <loader id="orderDtoesDl" readOnly="true"/>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters>
+            <pagination component="pagination"/>
+        </urlQueryParameters>
+    </facets>
+    <layout>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button id="refreshButton" text="Refresh"/>
+            <simplePagination id="pagination" dataLoader="orderDtoesDl"/>
+        </hbox>
+        <dataGrid id="orderDtoesDataGrid"
+                  width="100%"
+                  minHeight="20em"
+                  dataContainer="orderDtoesDc"
+                  columnReorderingAllowed="true">
+            <columns resizable="true">
+                <column property="customer"/>
+                <column property="address"/>
+                <column property="itemDto"/>
+                <column property="itemPersisted"/>
+                <column property="quantity"/>
+            </columns>
+        </dataGrid>
+    </layout>
+</view>

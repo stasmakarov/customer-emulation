@@ -4,7 +4,7 @@
       focusComponent="itemsDataGrid">
     <data>
         <collection id="itemsDc"
-                    class="com.company.customeremulation.entity.Item">
+                    class="com.company.customeremulation.entity.ItemDto">
             <loader id="itemsDl" readOnly="true"/>
         </collection>
     </data>
@@ -23,6 +23,7 @@
             <button id="createButton" action="itemsDataGrid.create"/>
             <button id="editButton" action="itemsDataGrid.edit"/>
             <button id="removeButton" action="itemsDataGrid.remove"/>
+            <button id="loadBtn" text="Load"/>
             <simplePagination id="pagination" dataLoader="itemsDl"/>
         </hbox>
         <dataGrid id="itemsDataGrid"

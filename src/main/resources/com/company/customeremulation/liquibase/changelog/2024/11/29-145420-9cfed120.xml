@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1" author="cst">
+        <createTable tableName="CST_PARAMS">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_CST_PARAMS"/>
+            </column>
+            <column name="MAX_ITEMS" type="INT"/>
+            <column name="MIN_DELAY" type="INT"/>
+            <column name="MAX_DELAY" type="INT"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
