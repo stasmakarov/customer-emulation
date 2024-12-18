@@ -1,6 +1,8 @@
 package com.company.customeremulation.rabbit;
 
 import com.company.customeremulation.entity.OrderDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.core.EntitySerialization;
 import io.jmix.core.EntitySerializationOption;
 import io.jmix.core.FetchPlan;
@@ -26,12 +28,23 @@ public class MessageProducer {
                 .addFetchPlan(FetchPlan.BASE)
                 .add("itemDto")
                 .build();
-        String json = entitySerialization.toJson(order,
-                fetchPlan,
-                EntitySerializationOption.IGNORE_ENTITY_NAME,
-                EntitySerializationOption.PRETTY_PRINT,
-                EntitySerializationOption.DO_NOT_SERIALIZE_DENIED_PROPERTY);
+//        String json = entitySerialization.toJson(order,
+//                fetchPlan,
+//                EntitySerializationOption.IGNORE_ENTITY_NAME,
+//                EntitySerializationOption.PRETTY_PRINT,
+//                EntitySerializationOption.DO_NOT_SERIALIZE_DENIED_PROPERTY);
+        String json = serializeOrderDto(order);
         rabbitTemplate.convertAndSend(queue, json);
         log.info("Order JSON: {}", json);
+    }
+
+    private String serializeOrderDto(OrderDto order) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(order);
+        } catch (JsonProcessingException e) {
+            //noinspection JmixRuntimeException
+            throw new RuntimeException(e);
+        }
     }
 }

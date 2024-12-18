@@ -1,6 +1,8 @@
 package com.company.customeremulation.entity;
 
+import com.company.customeremulation.rabbit.OrderDtoSerializer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.metamodel.annotation.InstanceName;
@@ -9,6 +11,7 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import java.util.UUID;
 
 @JmixEntity(name = "cst_OrderDto")
+@JsonSerialize(using = OrderDtoSerializer.class)
 public class OrderDto {
     @JmixGeneratedValue
     @JmixId
@@ -64,6 +67,7 @@ public class OrderDto {
     }
 
     @InstanceName
+    @JsonIgnore
     public String getInstanceName() {
         return String.format("%s, %s: %s - %s",
                 customer,
