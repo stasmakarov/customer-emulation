@@ -32,8 +32,8 @@ dependencies {
     implementation 'io.jmix.flowui:jmix-flowui-starter'
     implementation 'io.jmix.flowui:jmix-flowui-data-starter'
     implementation 'io.jmix.flowui:jmix-flowui-themes'
-    implementation 'io.jmix.datatools:jmix-datatools-starter'
-    implementation 'io.jmix.datatools:jmix-datatools-flowui-starter'
+//    implementation 'io.jmix.datatools:jmix-datatools-starter'
+//    implementation 'io.jmix.datatools:jmix-datatools-flowui-starter'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
@@ -44,8 +44,8 @@ dependencies {
     }
     testImplementation 'io.jmix.flowui:jmix-flowui-test-assist'
     implementation 'io.jmix.restds:jmix-restds-starter'
-    implementation 'io.jmix.rest:jmix-rest-starter'
-    implementation 'io.jmix.authserver:jmix-authserver-starter'
+//    implementation 'io.jmix.rest:jmix-rest-starter'
+//    implementation 'io.jmix.authserver:jmix-authserver-starter'
 
     implementation 'org.json:json:20240303'
 
@@ -56,6 +56,7 @@ dependencies {
 
     implementation 'fr.dudie:nominatim-api:3.4'
 
+    implementation 'io.jmix.charts:jmix-charts-flowui-starter'
 }
 
 configurations.implementation {

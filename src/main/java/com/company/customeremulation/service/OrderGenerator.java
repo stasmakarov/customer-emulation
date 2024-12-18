@@ -1,16 +1,19 @@
 package com.company.customeremulation.service;
 
 import com.company.customeremulation.app.OrderDtoService;
-import com.company.customeremulation.entity.ItemPersisted;
+import com.company.customeremulation.entity.ItemDto;
 import com.company.customeremulation.entity.OrderDto;
 import com.company.customeremulation.entity.Params;
+import com.company.customeremulation.event.OrderGeneratedEvent;
 import com.company.customeremulation.service.record.Customer;
 import com.company.customeremulation.service.record.MapPoint;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +22,7 @@ import java.util.Random;
 @Service
 public class OrderGenerator {
 
+    private static final Logger log = LoggerFactory.getLogger(OrderGenerator.class);
     @Autowired
     private Metadata metadata;
     @Autowired
@@ -28,24 +32,20 @@ public class OrderGenerator {
     @Autowired
     private AddressService addressService;
     @Autowired
-    private RabbitTemplate rabbitTemplate;
-    @Autowired
     private OrderDtoService orderDtoService;
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
-    public String sendOrder(String queue) {
-        OrderDto order = generate();
-        String json = serialize(order);
-        rabbitTemplate.convertAndSend(queue, json);
-        return json;
-    }
-
-    public OrderDto generate() {
+    public void generate() {
         Params params = getParams();
-        if (params == null) return null;
+        if (params == null) {
+            log.info("No parameters defined");
+            return;
+        }
 
         OrderDto order = metadata.create(OrderDto.class);
         Customer customer = customerService.generateCustomer();
-        ItemPersisted item = randomItem();
+        ItemDto itemDto = randomItemDto();
         int quantity = randomQuantity();
         boolean fakeAddress = isFakeAddress();
         String address = fakeAddress ? customer.address() : getRandomAddress();
@@ -53,21 +53,10 @@ public class OrderGenerator {
 
         order.setCustomer(customerName);
         order.setAddress(address);
-        order.setItemPersisted(item);
+        order.setItemDto(itemDto);
         order.setQuantity(quantity);
         orderDtoService.addOrderDto(order);
-        return order;
-    }
-
-    public String serialize(OrderDto order) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonString = null;
-        try {
-            jsonString = objectMapper.writeValueAsString(order);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return jsonString;
+        applicationEventPublisher.publishEvent(new OrderGeneratedEvent(this, order));
     }
 
     private Params getParams() {
@@ -77,7 +66,7 @@ public class OrderGenerator {
     }
 
     private String getRandomAddress() {
-        String address = null;
+        String address;
         do {
             MapPoint point = addressService.randomPoint();
             address = addressService.findAddress(point);
@@ -85,9 +74,8 @@ public class OrderGenerator {
         return address;
     }
 
-    private ItemPersisted randomItem() {
-        List<ItemPersisted> items = dataManager.load(ItemPersisted.class).all().list();
-//        List<Item> items = dataManager.load(Item.class).all().list();
+    private ItemDto randomItemDto() {
+        List<ItemDto> items = dataManager.load(ItemDto.class).all().list();
         if (!items.isEmpty()) {
             int size = items.size();
             Random random = new Random();

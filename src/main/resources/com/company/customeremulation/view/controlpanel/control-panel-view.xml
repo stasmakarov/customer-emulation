@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://controlPanelView.title">
+    <layout>
+        <vbox>
+            <vbox>
+                <h5 text="Orders Generation"/>
+                <hbox>
+                    <button id="startBtn" text="Start generation"/>
+                    <button id="stopBtn" text="Stop generation"/>
+                </hbox>
+            </vbox>
+            <vbox>
+                <h5 text="Orders info"/>
+                <hbox>
+                    <!--                    <charts:chart id="itemsOrderedChart">-->
+                    <!--                        <charts:dataSet>-->
+                    <!--                            <charts:source/>-->
+                    <!--                        </charts:dataSet>-->
+                    <!--                        <charts:xAxes>-->
+                    <!--                            <charts:xAxis>-->
+                    <!--                            </charts:xAxis>-->
+                    <!--                        </charts:xAxes>-->
+                    <!--                        <charts:series>-->
+                    <!--                            <charts:bar id="bar"/>-->
+                    <!--                        </charts:series>-->
+                    <!--                    </charts:chart>-->
+
+                </hbox>
+            </vbox>
+        </vbox>
+    </layout></view>

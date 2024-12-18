@@ -31,3 +31,4 @@ vite.generated.ts
 webpack.generated.js
 
 .DS_Store
+/.jmix/hsqldb/cst.lck

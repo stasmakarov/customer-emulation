@@ -23,6 +23,7 @@
             </responsiveSteps>
             <textField id="nameField" property="name"/>
             <textField id="descriptionField" property="description"/>
+            <textField id="orderedField" property="ordered"/>
         </formLayout>
         <hbox id="detailActions">
             <button id="saveAndCloseButton" action="saveAction"/>

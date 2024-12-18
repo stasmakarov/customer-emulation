@@ -16,12 +16,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import javax.sql.DataSource;
 
 @Push
 @Theme(value = "customer-emulation")
 @PWA(name = "Customer Emulation", shortName = "Customer Emulation")
+@EnableAsync
 @SpringBootApplication
 public class CustomerEmulationApplication implements AppShellConfigurator {
 

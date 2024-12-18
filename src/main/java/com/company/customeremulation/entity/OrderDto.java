@@ -1,7 +1,9 @@
 package com.company.customeremulation.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
+import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import java.util.UUID;
@@ -10,6 +12,7 @@ import java.util.UUID;
 public class OrderDto {
     @JmixGeneratedValue
     @JmixId
+    @JsonIgnore
     private UUID id;
 
     private String customer;
@@ -17,8 +20,6 @@ public class OrderDto {
     private String address;
 
     private ItemDto itemDto;
-
-    private ItemPersisted itemPersisted;
 
     private Integer quantity;
 
@@ -28,14 +29,6 @@ public class OrderDto {
 
     public Integer getQuantity() {
         return quantity;
-    }
-
-    public ItemPersisted getItemPersisted() {
-        return itemPersisted;
-    }
-
-    public void setItemPersisted(ItemPersisted itemPersisted) {
-        this.itemPersisted = itemPersisted;
     }
 
     public ItemDto getItemDto() {
@@ -70,11 +63,12 @@ public class OrderDto {
         this.id = id;
     }
 
+    @InstanceName
     public String getInstanceName() {
         return String.format("%s, %s: %s - %s",
                 customer,
                 address,
-                itemPersisted.getName(),
+                itemDto.getName(),
                 quantity.toString());
     }
 }

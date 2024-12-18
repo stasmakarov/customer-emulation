@@ -28,7 +28,6 @@
                 <column property="customer"/>
                 <column property="address"/>
                 <column property="itemDto"/>
-                <column property="itemPersisted"/>
                 <column property="quantity"/>
             </columns>
         </dataGrid>

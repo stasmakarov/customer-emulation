@@ -25,42 +25,34 @@ import java.util.List;
 public class ItemListView extends StandardListView<ItemDto> {
     private static final Logger log = LoggerFactory.getLogger(ItemListView.class);
 
-
-    @Autowired
-    private DataManager dataManager;
-    @ViewComponent
-    private CollectionContainer<ItemDto> itemsDc;
-    @ViewComponent
-    private CollectionLoader<ItemDto> itemsDl;
-
-    @Install(to = "itemsDl", target = Target.DATA_LOADER)
-    protected List<ItemDto> itemsDlLoadDelegate(LoadContext<ItemDto> loadContext) {
-        try {
-            List<ItemDto> entities = dataManager.loadList(loadContext);
-            if (entities == null) {
-                log.error("Received null response from REST endpoint");
-                return Collections.emptyList();
-            }
-            return entities;
-        } catch (Exception e) {
-            log.error("Error loading data from REST endpoint", e);
-            return Collections.emptyList();
-        }
-    }
-
-
-
-    @Subscribe(id = "loadBtn", subject = "clickListener")
-    public void onLoadBtnClick(final ClickEvent<JmixButton> event) {
-
-    }
-
-    @Subscribe
-    public void onBeforeShow(final BeforeShowEvent event) {
-//        List<ItemDto> itemDtos = dataManager.load(ItemDto.class).all().list();
-//        itemsDc.setItems(itemDtos);
-        itemsDl.load();
-    }
-
+//
+//    @Autowired
+//    private DataManager dataManager;
+//    @ViewComponent
+//    private CollectionContainer<ItemDto> itemsDc;
+//    @ViewComponent
+//    private CollectionLoader<ItemDto> itemsDl;
+//
+//    @Install(to = "itemsDl", target = Target.DATA_LOADER)
+//    protected List<ItemDto> itemsDlLoadDelegate(LoadContext<ItemDto> loadContext) {
+//        try {
+//            List<ItemDto> entities = dataManager.loadList(loadContext);
+//            if (entities == null) {
+//                log.error("Received null response from REST endpoint");
+//                return Collections.emptyList();
+//            } else
+//                return entities;
+//        } catch (Exception e) {
+//            log.error("Error loading data from REST endpoint", e);
+//            return Collections.emptyList();
+//        }
+//    }
+//
+//
+//    @Subscribe
+//    public void onBeforeShow(final BeforeShowEvent event) {
+//        itemsDl.load();
+//    }
+//
 
 }

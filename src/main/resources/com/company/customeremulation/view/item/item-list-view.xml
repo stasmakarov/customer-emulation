@@ -5,7 +5,7 @@
     <data>
         <collection id="itemsDc"
                     class="com.company.customeremulation.entity.ItemDto">
-            <loader id="itemsDl" readOnly="true"/>
+            <loader id="itemsDl" readOnly="false"/>
         </collection>
     </data>
     <facets>
@@ -22,8 +22,6 @@
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button id="createButton" action="itemsDataGrid.create"/>
             <button id="editButton" action="itemsDataGrid.edit"/>
-            <button id="removeButton" action="itemsDataGrid.remove"/>
-            <button id="loadBtn" text="Load"/>
             <simplePagination id="pagination" dataLoader="itemsDl"/>
         </hbox>
         <dataGrid id="itemsDataGrid"
@@ -34,10 +32,10 @@
             <actions>
                 <action id="create" type="list_create"/>
                 <action id="edit" type="list_edit"/>
-                <action id="remove" type="list_remove"/>
             </actions>
             <columns resizable="true">
                 <column property="name"/>
+                <column property="ordered"/>
                 <column property="description"/>
             </columns>
         </dataGrid>

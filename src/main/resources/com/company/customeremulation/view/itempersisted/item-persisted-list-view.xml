@@ -43,21 +43,6 @@
                     <button id="removeButton" action="itemPersistedsDataGrid.remove"/>
                     <simplePagination id="pagination" dataLoader="itemPersistedsDl"/>
                 </hbox>
-                <dataGrid id="itemPersistedsDataGrid"
-                          width="100%"
-                          minHeight="20em"
-                          dataContainer="itemPersistedsDc"
-                          columnReorderingAllowed="true">
-                    <actions>
-                        <action id="create" type="list_create"/>
-                        <action id="edit" type="list_edit"/>
-                        <action id="remove" type="list_remove"/>
-                    </actions>
-                    <columns resizable="true">
-                        <column property="name"/>
-                        <column property="description"/>
-                    </columns>
-                </dataGrid>
                 <hbox id="lookupActions" visible="false">
                     <button id="selectButton" action="selectAction"/>
                     <button id="discardButton" action="discardAction"/>

@@ -1,34 +1,36 @@
 package com.company.customeremulation.service;
 
-import com.company.customeremulation.view.demo.DemoView;
+import com.company.customeremulation.entity.Params;
+import io.jmix.core.DataManager;
 import io.jmix.flowui.backgroundtask.BackgroundTask;
 import io.jmix.flowui.backgroundtask.TaskLifeCycle;
+import io.jmix.flowui.view.StandardView;
 
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.Thread.sleep;
+
 public class BackgroundOrdersStream extends BackgroundTask<Integer, Void> {
-    private volatile boolean isRunning = false;
+    private boolean isRunning = false;
 
     private final OrderGenerator orderGenerator;
-    private final DemoView demoView;
 
     public BackgroundOrdersStream(long timeout,
-                                  OrderGenerator orderGenerator,
-                                  DemoView demoView) {
+                                  OrderGenerator orderGenerator) {
         super(timeout, TimeUnit.MINUTES);
         this.orderGenerator = orderGenerator;
-        this.demoView = demoView;
     }
 
     @Override
     public Void run(TaskLifeCycle taskLifeCycle) throws Exception {
         int i = 0;
         while (!taskLifeCycle.isCancelled()) {
-            int delay = orderGenerator.randomDelay();
-            String orderJson = orderGenerator.sendOrder("orders");
-            System.out.println("Order: " + i++ + ", Delay: " + delay + ", JSON: " + orderJson);
+            orderGenerator.generate();
             try {
-                Thread.sleep(delay);
+                //noinspection BusyWait
+                sleep(orderGenerator.randomDelay());
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
