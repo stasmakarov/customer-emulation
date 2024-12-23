@@ -5,7 +5,7 @@
     <data>
         <collection id="itemsDc"
                     class="com.company.customeremulation.entity.ItemDto">
-            <loader id="itemsDl" readOnly="false"/>
+            <loader id="itemsDl" readOnly="true"/>
         </collection>
     </data>
     <facets>
@@ -35,7 +35,6 @@
             </actions>
             <columns resizable="true">
                 <column property="name"/>
-                <column property="ordered"/>
                 <column property="description"/>
             </columns>
         </dataGrid>

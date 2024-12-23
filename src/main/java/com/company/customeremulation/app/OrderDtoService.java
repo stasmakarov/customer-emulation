@@ -25,4 +25,8 @@ public class OrderDtoService {
     public void addOrderDto(OrderDto exampleDto) {
         orderDtos.add(exampleDto);
     }
+
+    public Integer getCount() {
+        return orderDtos.size();
+    }
 }

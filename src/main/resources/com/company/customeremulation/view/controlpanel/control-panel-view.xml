@@ -4,36 +4,48 @@
     <layout>
         <vbox>
             <vbox>
-                <h5 text="Orders Generation"/>
+                <h2 text="Orders Generation"/>
                 <hbox>
-                    <button id="startBtn" text="Start generation"/>
-                    <button id="stopBtn" text="Stop generation"/>
+                    <button id="startBtn" text="Start"/>
+                    <button id="stopBtn" text="Stop"/>
                 </hbox>
             </vbox>
-            <vbox>
-                <h5 text="Orders info"/>
-                <hbox>
-                    <charts:chart id="orderedItemsChart"
-                                  width="40em" height="100%" minHeight="30em"
-                                  alignSelf="STRETCH">
-                        <charts:title text="Ordered Items"/>
-                        <charts:series>
-                            <charts:bar name="Items qty"/>
-                        </charts:series>
-                        <charts:xAxes>
-                            <charts:xAxis/>
-                        </charts:xAxes>
-                        <charts:yAxes>
-                            <charts:yAxis name="Items" position="LEFT" alignTicks="true">
-                                <charts:axisLabel
-                                        formatterFunction="function(value){return value;}"/>
-                            </charts:yAxis>
-                        </charts:yAxes>
-                        <charts:dataSet id="itemsOrderedDataSet">
-
-                        </charts:dataSet>
-                    </charts:chart>
-                </hbox>
-            </vbox>
+            <vbox id="statsPanel" >
+                <h2 text="Statistics"/>
+                    <hbox id="titles" spacing="true">
+                        <vbox>
+                            <h3 text="Total orders" />
+                            <h1 id="totalOrders" width="5em"/>
+                        </vbox>
+                        <vbox>
+                            <h3 text="Orders by Items" width="20em" />
+                            <charts:chart id="ordersPie"  height="100%" minHeight="20em"
+                                          alignSelf="STRETCH">
+                                <charts:series>
+                                    <charts:pie name="Orders"/>
+                                </charts:series>
+                            </charts:chart>
+                        </vbox>
+                        <vbox>
+                            <h3 text="Ordered Items" width="20em"/>
+                            <charts:chart id="orderedItemsChart"
+                                           height="100%" minHeight="30em"
+                                          alignSelf="STRETCH">
+                                <charts:series>
+                                    <charts:bar name="Items qty"/>
+                                </charts:series>
+                                <charts:xAxes>
+                                    <charts:xAxis/>
+                                </charts:xAxes>
+                                <charts:yAxes>
+                                    <charts:yAxis alignTicks="true">
+                                        <charts:axisLabel
+                                                formatterFunction="function(value){return value;}"/>
+                                    </charts:yAxis>
+                                </charts:yAxes>
+                            </charts:chart>
+                        </vbox>
+                    </hbox>
+                </vbox>
         </vbox>
     </layout></view>
