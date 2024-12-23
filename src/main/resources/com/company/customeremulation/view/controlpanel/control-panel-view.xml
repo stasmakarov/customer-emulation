@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<view xmlns="http://jmix.io/schema/flowui/view"
+<view xmlns="http://jmix.io/schema/flowui/view" xmlns:charts="http://jmix.io/schema/charts/ui"
       title="msg://controlPanelView.title">
     <layout>
         <vbox>
@@ -13,19 +13,26 @@
             <vbox>
                 <h5 text="Orders info"/>
                 <hbox>
-                    <!--                    <charts:chart id="itemsOrderedChart">-->
-                    <!--                        <charts:dataSet>-->
-                    <!--                            <charts:source/>-->
-                    <!--                        </charts:dataSet>-->
-                    <!--                        <charts:xAxes>-->
-                    <!--                            <charts:xAxis>-->
-                    <!--                            </charts:xAxis>-->
-                    <!--                        </charts:xAxes>-->
-                    <!--                        <charts:series>-->
-                    <!--                            <charts:bar id="bar"/>-->
-                    <!--                        </charts:series>-->
-                    <!--                    </charts:chart>-->
+                    <charts:chart id="orderedItemsChart"
+                                  width="40em" height="100%" minHeight="30em"
+                                  alignSelf="STRETCH">
+                        <charts:title text="Ordered Items"/>
+                        <charts:series>
+                            <charts:bar name="Items qty"/>
+                        </charts:series>
+                        <charts:xAxes>
+                            <charts:xAxis/>
+                        </charts:xAxes>
+                        <charts:yAxes>
+                            <charts:yAxis name="Items" position="LEFT" alignTicks="true">
+                                <charts:axisLabel
+                                        formatterFunction="function(value){return value;}"/>
+                            </charts:yAxis>
+                        </charts:yAxes>
+                        <charts:dataSet id="itemsOrderedDataSet">
 
+                        </charts:dataSet>
+                    </charts:chart>
                 </hbox>
             </vbox>
         </vbox>

@@ -8,6 +8,7 @@ import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @JmixEntity(name = "cst_OrderDto")
@@ -25,6 +26,16 @@ public class OrderDto {
     private ItemDto itemDto;
 
     private Integer quantity;
+
+    private LocalDate created;
+
+    public LocalDate getCreated() {
+        return created;
+    }
+
+    public void setCreated(LocalDate created) {
+        this.created = created;
+    }
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;

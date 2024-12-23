@@ -16,13 +16,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Random;
 
 @Service
 public class OrderGenerator {
-
     private static final Logger log = LoggerFactory.getLogger(OrderGenerator.class);
+
     @Autowired
     private Metadata metadata;
     @Autowired
@@ -36,11 +37,11 @@ public class OrderGenerator {
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
 
-    public void generate() {
+    public OrderDto generate() {
         Params params = getParams();
         if (params == null) {
             log.info("No parameters defined");
-            return;
+            return null;
         }
 
         OrderDto order = metadata.create(OrderDto.class);
@@ -55,8 +56,10 @@ public class OrderGenerator {
         order.setAddress(address);
         order.setItemDto(itemDto);
         order.setQuantity(quantity);
+        order.setCreated(LocalDate.now());
         orderDtoService.addOrderDto(order);
         applicationEventPublisher.publishEvent(new OrderGeneratedEvent(this, order));
+        return order;
     }
 
     private Params getParams() {
