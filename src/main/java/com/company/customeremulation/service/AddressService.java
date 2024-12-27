@@ -1,10 +1,14 @@
 package com.company.customeremulation.service;
+import com.company.customeremulation.event.ServiceUnavailableEvent;
 import com.company.customeremulation.service.record.FeatureCollection;
 import com.company.customeremulation.service.record.NominatimReverseResponse;
 import com.company.customeremulation.service.record.MapPoint;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -15,9 +19,12 @@ import static java.lang.Integer.parseInt;
 
 @Service
 public class AddressService {
+    private static final Logger log = LoggerFactory.getLogger(AddressService.class);
 
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
     public String findAddress(MapPoint point) {
         String NOMINATIM_URL = "https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lon}&format=geojson&addressdetails=1";
@@ -27,18 +34,14 @@ public class AddressService {
                 point.lat(), point.lon());
         ObjectMapper objectMapper = new ObjectMapper();
 
-//        ResponseEntity<NominatimReverseResponse[]> response = restTemplate.getForEntity(NOMINATIM_URL,
-//                NominatimReverseResponse[].class,
-//                point.lat(), point.lon());
-
         if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-//            NominatimReverseResponse results[] = response.getBody();
             String body = response.getBody();
             FeatureCollection results;
             try {
                 results = objectMapper.readValue(body, FeatureCollection.class);
             } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
+                log.error("Cannot parse address: {}", body);
+                return null;
             }
             if (results != null) {
                 String house_number = results.features()[0].properties().address().house_number();
@@ -48,6 +51,9 @@ public class AddressService {
                 } catch (NumberFormatException ignored) {}
             }
         }
+        log.error("Nominatim error");
+        applicationEventPublisher.publishEvent(new ServiceUnavailableEvent(this,
+                "Nominatim"));
         return null;
     }
 

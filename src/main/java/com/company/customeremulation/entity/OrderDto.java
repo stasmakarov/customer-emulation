@@ -27,6 +27,7 @@ public class OrderDto {
 
     private Integer quantity;
 
+    @JsonIgnore
     private LocalDate created;
 
     public LocalDate getCreated() {

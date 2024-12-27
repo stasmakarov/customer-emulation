@@ -1,22 +1,41 @@
 package com.company.customeremulation.service;
+import com.company.customeremulation.event.ServiceUnavailableEvent;
 import com.company.customeremulation.service.record.Customer;
 import com.company.customeremulation.service.record.Location;
 import com.company.customeremulation.service.record.RandomUserResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Random;
 
 @Service
 public class CustomerService {
+    private static final Logger log = LoggerFactory.getLogger(CustomerService.class);
 
     private static final String RANDOM_RUSSIANS_API = "dWrUnYxCnBakMgAcSKlYiISLpZdsAw3LT8vlzANDZjSm_140737489973366";
     private static final String RANDOM_RUSSIAN_FIO = "https://api.randogram.ru/generateNames";
     private static final String RANDOM_USER_API = "https://randomuser.me/api/";
 
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
+
     public Customer generateCustomer() {
         RestTemplate restTemplate = new RestTemplate();
-        RandomUserResponse response = restTemplate.getForObject(RANDOM_USER_API, RandomUserResponse.class);
+        RandomUserResponse response;
+        try {
+            response = restTemplate.getForObject(RANDOM_USER_API,
+                    RandomUserResponse.class);
+        } catch (RestClientException e) {
+            log.error("Service RANDOM USER is unavailable. Check internet connection.");
+            applicationEventPublisher.publishEvent(new ServiceUnavailableEvent(this,
+                    "RandomCustomer"));
+            return null;
+        }
 
         if (response != null && response.results().length > 0) {
             String firstName = response.results()[0].name().first();
@@ -27,13 +46,16 @@ public class CustomerService {
             String streetName = location.street().name();
             String number = location.street().number().toString();
             String city = location.city();
-            String county = location.country();
-            StringBuilder builder = new StringBuilder();
-            builder.append(county).append(", ").append(city).append(", st. ")
-                    .append(streetName).append(", ").append(number);
-            return new Customer(name, builder.toString());
+            String country = location.country();
+            String address = country + ", " + city + ", st. " +
+                    streetName + ", " + number;
+            return new Customer(name, address);
+        } else {
+            log.error("RANDOM USER: Bad service response");
+            applicationEventPublisher.publishEvent(new ServiceUnavailableEvent(this,
+                    "RandomCustomer"));
+            return null;
         }
-        return null; // Handle error case
     }
 
     public String randomRussianCustomer() {

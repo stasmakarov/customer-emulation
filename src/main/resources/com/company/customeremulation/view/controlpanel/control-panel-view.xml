@@ -6,8 +6,8 @@
             <vbox>
                 <h2 text="Orders Generation"/>
                 <hbox>
-                    <button id="startBtn" text="Start"/>
-                    <button id="stopBtn" text="Stop"/>
+                    <button id="startBtn" text="Start" themeNames="primary large" width="5em"/>
+                    <button id="stopBtn" text="Stop" themeNames="error primary large" width="5em"/>
                 </hbox>
             </vbox>
             <vbox id="statsPanel" >

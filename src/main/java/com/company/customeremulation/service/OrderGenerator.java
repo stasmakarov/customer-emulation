@@ -11,7 +11,6 @@ import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -40,22 +39,32 @@ public class OrderGenerator {
     public OrderDto generate() {
         Params params = getParams();
         if (params == null) {
-            log.info("No parameters defined");
+            log.error("No parameters defined");
             return null;
         }
 
-        OrderDto order = metadata.create(OrderDto.class);
-        Customer customer = customerService.generateCustomer();
-        ItemDto itemDto = randomItemDto();
-        int quantity = randomQuantity();
-        boolean fakeAddress = isFakeAddress();
-        String address = fakeAddress ? customer.address() : getRandomAddress();
-        String customerName = fakeAddress ? customer.name() : customerService.randomRussianCustomer();
+        String address;
+        String customerName;
+        String randomAddress = getRandomAddress();
 
+        if (isFakeAddress()) {      //Address outside boundaries
+            Customer customer = customerService.generateCustomer();
+            if (customer == null) {
+                log.error("Customer is null");
+                return null;
+            }
+            address = customer.address();
+            customerName = customer.name();
+        } else {
+            address = randomAddress;
+            customerName = customerService.randomRussianCustomer();
+        }
+
+        OrderDto order = metadata.create(OrderDto.class);
         order.setCustomer(customerName);
         order.setAddress(address);
-        order.setItemDto(itemDto);
-        order.setQuantity(quantity);
+        order.setItemDto(randomItemDto());
+        order.setQuantity(randomQuantity());
         order.setCreated(LocalDate.now());
         orderDtoService.addOrderDto(order);
         applicationEventPublisher.publishEvent(new OrderGeneratedEvent(this, order));
@@ -65,15 +74,16 @@ public class OrderGenerator {
     private Params getParams() {
         List<Params> params = dataManager.load(Params.class).all().list();
         if (!params.isEmpty()) return params.get(0);
-        else return null;
+        else { return null; }
     }
 
     private String getRandomAddress() {
         String address;
+        int count = 10;
         do {
             MapPoint point = addressService.randomPoint();
             address = addressService.findAddress(point);
-        } while (address == null);
+        } while (address == null && count-- > 0);
         return address;
     }
 

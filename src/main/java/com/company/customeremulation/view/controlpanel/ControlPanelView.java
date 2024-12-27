@@ -5,6 +5,7 @@ import com.company.customeremulation.app.OrderDtoService;
 import com.company.customeremulation.entity.OrderDto;
 import com.company.customeremulation.event.OrderGeneratedEvent;
 import com.company.customeremulation.event.OrderProcessedEvent;
+import com.company.customeremulation.event.StoppingOrdersGenerationEvent;
 import com.company.customeremulation.infoboard.InfoService;
 import com.company.customeremulation.infoboard.OrdersInfo;
 import com.company.customeremulation.service.BackgroundOrdersStream;
@@ -160,5 +161,20 @@ public class ControlPanelView extends StandardView {
                 .show();
         updateCharts();
         statsPanel.setVisible(true);
+    }
+
+    @EventListener
+    private void onServiceUnavailable(StoppingOrdersGenerationEvent event) {
+        if (taskHandler != null) {
+            taskHandler.cancel();
+            startBtn.setEnabled(true);
+            stopBtn.setEnabled(false);
+            notifications.create("Service unavailable: " + event.getName()
+                            + "\nOrders generation stopped")
+                    .withThemeVariant(NotificationVariant.LUMO_ERROR)
+                    .withDuration(3000)
+                    .show();
+            log.info("Service unavailable: " + event.getName());
+        }
     }
 }

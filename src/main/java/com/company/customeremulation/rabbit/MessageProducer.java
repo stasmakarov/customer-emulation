@@ -1,12 +1,10 @@
 package com.company.customeremulation.rabbit;
 
 import com.company.customeremulation.entity.OrderDto;
+import com.company.customeremulation.service.record.OrderRecord;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.core.EntitySerialization;
-import io.jmix.core.EntitySerializationOption;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlans;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -20,20 +18,9 @@ public class MessageProducer {
     private RabbitTemplate rabbitTemplate;
     @Autowired
     private EntitySerialization entitySerialization;
-    @Autowired
-    private FetchPlans fetchPlans;
 
     public void sendMessage(String queue, OrderDto order) {
-        FetchPlan fetchPlan = fetchPlans.builder(OrderDto.class)
-                .addFetchPlan(FetchPlan.BASE)
-                .add("itemDto")
-                .build();
-//        String json = entitySerialization.toJson(order,
-//                fetchPlan,
-//                EntitySerializationOption.IGNORE_ENTITY_NAME,
-//                EntitySerializationOption.PRETTY_PRINT,
-//                EntitySerializationOption.DO_NOT_SERIALIZE_DENIED_PROPERTY);
-        String json = serializeOrderDto(order);
+        String json = serialize(order);
         rabbitTemplate.convertAndSend(queue, json);
         log.info("Order JSON: {}", json);
     }
@@ -46,5 +33,20 @@ public class MessageProducer {
             //noinspection JmixRuntimeException
             throw new RuntimeException(e);
         }
+    }
+
+    private String serialize(OrderDto order) {
+        OrderRecord orderRecord = new OrderRecord(order.getCustomer(),
+                order.getAddress(),
+                order.getItemDto().getName(),
+                order.getQuantity());
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(orderRecord);
+        } catch (JsonProcessingException e) {
+            //noinspection JmixRuntimeException
+            throw new RuntimeException(e);
+        }
+
     }
 }
