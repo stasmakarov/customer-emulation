@@ -20,6 +20,7 @@ public class CustomerService {
     private static final String RANDOM_RUSSIANS_API = "dWrUnYxCnBakMgAcSKlYiISLpZdsAw3LT8vlzANDZjSm_140737489973366";
     private static final String RANDOM_RUSSIAN_FIO = "https://api.randogram.ru/generateNames";
     private static final String RANDOM_USER_API = "https://randomuser.me/api/";
+    private static boolean isRandomUserServiceAvailable;
 
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
@@ -30,10 +31,14 @@ public class CustomerService {
         try {
             response = restTemplate.getForObject(RANDOM_USER_API,
                     RandomUserResponse.class);
+            isRandomUserServiceAvailable = true;
         } catch (RestClientException e) {
             log.error("Service RANDOM USER is unavailable. Check internet connection.");
-            applicationEventPublisher.publishEvent(new ServiceUnavailableEvent(this,
-                    "RandomCustomer"));
+            if (isRandomUserServiceAvailable) {
+                isRandomUserServiceAvailable = false;
+                applicationEventPublisher.publishEvent(new ServiceUnavailableEvent(this,
+                        "RandomCustomer"));
+            }
             return null;
         }
 

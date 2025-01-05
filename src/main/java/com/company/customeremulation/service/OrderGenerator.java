@@ -1,12 +1,13 @@
 package com.company.customeremulation.service;
 
 import com.company.customeremulation.app.OrderDtoService;
+import com.company.customeremulation.entity.CustomerSetting;
 import com.company.customeremulation.entity.ItemDto;
 import com.company.customeremulation.entity.OrderDto;
-import com.company.customeremulation.entity.Params;
 import com.company.customeremulation.event.OrderGeneratedEvent;
 import com.company.customeremulation.service.record.Customer;
 import com.company.customeremulation.service.record.MapPoint;
+import io.jmix.appsettings.AppSettings;
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
 import org.slf4j.Logger;
@@ -36,12 +37,15 @@ public class OrderGenerator {
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
 
+    private final AppSettings appSettings;
+    private final CustomerSetting customerSettings;
+
+    public OrderGenerator(AppSettings appSettings) {
+        this.appSettings = appSettings;
+        customerSettings = appSettings.load(CustomerSetting.class);;
+    }
+
     public OrderDto generate() {
-        Params params = getParams();
-        if (params == null) {
-            log.error("No parameters defined");
-            return null;
-        }
 
         String address;
         String customerName;
@@ -71,18 +75,12 @@ public class OrderGenerator {
         return order;
     }
 
-    private Params getParams() {
-        List<Params> params = dataManager.load(Params.class).all().list();
-        if (!params.isEmpty()) return params.get(0);
-        else { return null; }
-    }
-
     private String getRandomAddress() {
         String address;
-        int count = 10;
+        int count = customerSettings.getAttempts();
         do {
             MapPoint point = addressService.randomPoint();
-            address = addressService.findAddress(point);
+            address = addressService.findAddress(point).orElse(null);
         } while (address == null && count-- > 0);
         return address;
     }
@@ -99,35 +97,21 @@ public class OrderGenerator {
     }
 
     private int randomQuantity() {
-        List<Params> params = dataManager.load(Params.class).all().list();
-        if (!params.isEmpty()) {
-            Integer maxItems = params.get(0).getMaxItems();
-            if (maxItems  != null) {
-                Random random = new Random();
-                return random.nextInt(1, maxItems);
-            }
-        }
-        return 1;
+        int maxItems = customerSettings.getMaxItems();
+        Random random = new Random();
+        return random.nextInt(1, maxItems);
     }
 
     private boolean isFakeAddress() {
-        List<Params> params = dataManager.load(Params.class).all().list();
-        if (!params.isEmpty()) {
-            Integer probability = params.get(0).getFakeAddressProbability();
-            Random random = new Random();
-            return random.nextInt(100) <= probability;
-        }
-        return false;
+        int probability = customerSettings.getFakeProbability();
+        Random random = new Random();
+        return random.nextInt(100) <= probability;
     }
 
     public int randomDelay() {
-        List<Params> params = dataManager.load(Params.class).all().list();
-        if (!params.isEmpty()) {
-            Integer maxDelay = params.get(0).getMaxDelay();
-            Integer minDelay = params.get(0).getMinDelay();
-            Random random = new Random();
-            return (random.nextInt(maxDelay - minDelay + 1) + minDelay) * 1000;
-        }
-        return 0;
+        int minDelay = customerSettings.getMinDelay();
+        int maxDelay = customerSettings.getMaxDelay();
+        Random random = new Random();
+        return (random.nextInt(maxDelay - minDelay + 1) + minDelay) * 1000;
     }
 }

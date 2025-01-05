@@ -60,24 +60,10 @@ public class LoginView extends StandardView implements LocaleChangeObserver {
     @Value("${ui.login.defaultPassword:}")
     private String defaultPassword;
 
-    @Autowired
-    private RestClientCredentialsAuthenticator authenticator;
-
-    @Autowired
-    private Dialogs dialogs;
-
     @Subscribe
     public void onInit(final InitEvent event) {
         initLocales();
         initDefaultCredentials();
-        try {
-            String token = authenticator.getAuthenticationToken();
-        } catch (Exception e) {
-            dialogs.createMessageDialog()
-                    .withText("REST Data Store is unavailable")
-                    .build()
-                    .open();
-        }
     }
 
     private void initLocales() {

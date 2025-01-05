@@ -7,7 +7,6 @@
         <item view="cst_OrderDto.list" title="msg://com.company.customeremulation.view.orderdto/orderDtoListView.title"/>
         <item view="cst_Item.list" title="msg://com.company.customeremulation.view.item/itemListView.title"/>
         <!--        <item view="cst_User.list" title="msg://com.company.customeremulation.view.user/UserListView.title"/>-->
-        <item view="cst_Params.list" title="msg://com.company.customeremulation.view.params/paramsListView.title"/>
     </menu>
 
 </menu-config>

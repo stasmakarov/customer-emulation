@@ -57,6 +57,8 @@ dependencies {
     implementation 'fr.dudie:nominatim-api:3.4'
 
     implementation 'io.jmix.charts:jmix-charts-flowui-starter'
+    implementation 'io.jmix.appsettings:jmix-appsettings-starter'
+    implementation 'io.jmix.appsettings:jmix-appsettings-flowui-starter'
 }
 
 configurations.implementation {

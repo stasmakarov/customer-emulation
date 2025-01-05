@@ -1,7 +1,6 @@
 package com.company.customeremulation.service;
 import com.company.customeremulation.event.ServiceUnavailableEvent;
 import com.company.customeremulation.service.record.FeatureCollection;
-import com.company.customeremulation.service.record.NominatimReverseResponse;
 import com.company.customeremulation.service.record.MapPoint;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,11 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Optional;
 import java.util.Random;
-
-import static java.lang.Integer.parseInt;
 
 @Service
 public class AddressService {
@@ -24,38 +23,53 @@ public class AddressService {
     @Autowired
     private RestTemplate restTemplate;
     @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
+    private static final String NOMINATIM_URL = "https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lon}&format=geojson&addressdetails=1";
+    private static final Random random = new Random();
+    private static boolean isNominatimServiceAvailable = true;
 
-    public String findAddress(MapPoint point) {
-        String NOMINATIM_URL = "https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lon}&format=geojson&addressdetails=1";
-
-        ResponseEntity<String> response = restTemplate.getForEntity(NOMINATIM_URL,
-                String.class,
-                point.lat(), point.lon());
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-            String body = response.getBody();
-            FeatureCollection results;
-            try {
-                results = objectMapper.readValue(body, FeatureCollection.class);
-            } catch (JsonProcessingException e) {
-                log.error("Cannot parse address: {}", body);
-                return null;
+    public Optional<String> findAddress(MapPoint point) {
+        ResponseEntity<String> response;
+        try {
+            response = restTemplate.getForEntity(NOMINATIM_URL,
+                    String.class,
+                    point.lat(), point.lon());
+            isNominatimServiceAvailable = true;
+        } catch (RestClientException e) {
+            log.error("Nominatim unavailable");
+            if (isNominatimServiceAvailable) {
+                isNominatimServiceAvailable = false;
+                applicationEventPublisher.publishEvent(new ServiceUnavailableEvent(this, "Nominatim"));
             }
-            if (results != null) {
-                String house_number = results.features()[0].properties().address().house_number();
-                try {
-                    int parsed = parseInt(house_number);
-                    return results.features()[0].properties().display_name();
-                } catch (NumberFormatException ignored) {}
-            }
+            return Optional.empty();
         }
-        log.error("Nominatim error");
-        applicationEventPublisher.publishEvent(new ServiceUnavailableEvent(this,
-                "Nominatim"));
-        return null;
+
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            log.error("Nominatim error: Status code {} - Response body: {}", response.getStatusCode(), response.getBody());
+            applicationEventPublisher.publishEvent(new ServiceUnavailableEvent(this, "Nominatim"));
+            return Optional.empty();
+        }
+
+        String body = response.getBody();
+        try {
+            FeatureCollection results = objectMapper.readValue(body, FeatureCollection.class);
+            if (results.features().length > 0) {
+                String house_number = results.features()[0].properties().address().house_number();
+                if (house_number != null)
+                    return Optional.of(results.features()[0].properties().display_name());
+                else
+                    return Optional.empty();
+            }
+        } catch (JsonProcessingException e) {
+            log.error("Cannot parse address for coordinates lat: {}, lon: {} - Response body: {}", point.lat(), point.lon(), body);
+        }
+
+        return Optional.empty(); // Return empty if no results found or parsing fails
     }
+
 
     public MapPoint randomPoint () {
 // Define the boundaries for Moscow
@@ -72,18 +86,10 @@ public class AddressService {
     }
 
     private static double getRandomLatitude(double minLat, double maxLat) {
-        Random random = new Random();
         return minLat + (maxLat - minLat) * random.nextDouble();
     }
 
     private static double getRandomLongitude(double minLon, double maxLon) {
-        Random random = new Random();
         return minLon + (maxLon - minLon) * random.nextDouble();
     }
 }
-
-
-
-
-
-

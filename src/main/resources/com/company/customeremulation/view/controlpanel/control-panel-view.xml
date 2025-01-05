@@ -15,21 +15,22 @@
                     <hbox id="titles" spacing="true">
                         <vbox>
                             <h3 text="Total orders" />
-                            <h1 id="totalOrders" width="5em"/>
+                            <h1 id="totalOrders" width="4em"/>
                         </vbox>
                         <vbox>
-                            <h3 text="Orders by Items" width="20em" />
-                            <charts:chart id="ordersPie"  height="100%" minHeight="20em"
+                            <h3 text="Orders by Items" width="18em" />
+                            <charts:chart id="ordersPie"  height="18em"
                                           alignSelf="STRETCH">
                                 <charts:series>
-                                    <charts:pie name="Orders"/>
+                                    <charts:pie name="Orders">
+                                    </charts:pie>
                                 </charts:series>
                             </charts:chart>
                         </vbox>
                         <vbox>
-                            <h3 text="Ordered Items" width="20em"/>
-                            <charts:chart id="orderedItemsChart"
-                                           height="100%" minHeight="30em"
+                            <h3 text="Ordered Items" width="18em"/>
+                            <charts:chart id="orderedItemsChart" colorPalette="DARKCYAN"
+                                           height="100%" minHeight="25em"
                                           alignSelf="STRETCH">
                                 <charts:series>
                                     <charts:bar name="Items qty"/>

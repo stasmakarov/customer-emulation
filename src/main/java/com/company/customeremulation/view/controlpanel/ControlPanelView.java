@@ -41,6 +41,7 @@ import java.util.Map;
 public class ControlPanelView extends StandardView {
     private static final Logger log = LoggerFactory.getLogger(ControlPanelView.class);
     private static BackgroundTaskHandler<Void> taskHandler;
+    private boolean isOrdersGeneratingOn;
 
     @Autowired
     private Notifications notifications;
@@ -75,6 +76,7 @@ public class ControlPanelView extends StandardView {
             startBtn.setEnabled(true);
             stopBtn.setEnabled(false);
         }
+
         if (orderDtoService.getCount() == 0) {
             statsPanel.setVisible(false);
         } else {
@@ -113,11 +115,12 @@ public class ControlPanelView extends StandardView {
                 .withThemeVariant(NotificationVariant.LUMO_SUCCESS)
                 .show();
         log.info("Orders generation started");
+        isOrdersGeneratingOn = true;
     }
 
     @Subscribe(id = "stopBtn", subject = "clickListener")
     public void onStopBtnClick(final ClickEvent<JmixButton> event) {
-        if (taskHandler != null) {
+        if (taskHandler != null && isOrdersGeneratingOn) {
             taskHandler.cancel();
             startBtn.setEnabled(true);
             stopBtn.setEnabled(false);
@@ -126,6 +129,7 @@ public class ControlPanelView extends StandardView {
                     .withDuration(2000)
                     .show();
             log.info("Orders generation stopped");
+            isOrdersGeneratingOn = false;
         }
     }
 
@@ -165,8 +169,9 @@ public class ControlPanelView extends StandardView {
 
     @EventListener
     private void onServiceUnavailable(StoppingOrdersGenerationEvent event) {
-        if (taskHandler != null) {
+        if (taskHandler != null && taskHandler.isAlive()) {
             taskHandler.cancel();
+            if (taskHandler.isCancelled()) {
             startBtn.setEnabled(true);
             stopBtn.setEnabled(false);
             notifications.create("Service unavailable: " + event.getName()
@@ -175,6 +180,7 @@ public class ControlPanelView extends StandardView {
                     .withDuration(3000)
                     .show();
             log.info("Service unavailable: " + event.getName());
+            }
         }
     }
 }
