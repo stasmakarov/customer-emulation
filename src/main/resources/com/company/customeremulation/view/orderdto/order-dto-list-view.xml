@@ -17,6 +17,7 @@
     <layout>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button id="refreshButton" text="Refresh"/>
+            <button id="deleteAllButton" text="Delete all"/>
             <simplePagination id="pagination" dataLoader="orderDtoesDl"/>
         </hbox>
         <dataGrid id="orderDtoesDataGrid"

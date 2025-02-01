@@ -4,7 +4,6 @@ import com.company.customeremulation.entity.OrderDto;
 import com.company.customeremulation.service.record.OrderRecord;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jmix.core.EntitySerialization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -16,8 +15,6 @@ public class MessageProducer {
     private static final Logger log = LoggerFactory.getLogger(MessageProducer.class);
     @Autowired
     private RabbitTemplate rabbitTemplate;
-    @Autowired
-    private EntitySerialization entitySerialization;
 
     public void sendMessage(String queue, OrderDto order) {
         String json = serialize(order);
@@ -25,15 +22,6 @@ public class MessageProducer {
         log.info("Order JSON: {}", json);
     }
 
-    private String serializeOrderDto(OrderDto order) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.writeValueAsString(order);
-        } catch (JsonProcessingException e) {
-            //noinspection JmixRuntimeException
-            throw new RuntimeException(e);
-        }
-    }
 
     private String serialize(OrderDto order) {
         OrderRecord orderRecord = new OrderRecord(order.getCustomer(),
@@ -47,6 +35,5 @@ public class MessageProducer {
             //noinspection JmixRuntimeException
             throw new RuntimeException(e);
         }
-
     }
 }

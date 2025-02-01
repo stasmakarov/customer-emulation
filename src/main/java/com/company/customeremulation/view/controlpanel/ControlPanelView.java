@@ -3,17 +3,16 @@ package com.company.customeremulation.view.controlpanel;
 
 import com.company.customeremulation.app.OrderDtoService;
 import com.company.customeremulation.entity.OrderDto;
-import com.company.customeremulation.event.OrderGeneratedEvent;
 import com.company.customeremulation.event.OrderProcessedEvent;
 import com.company.customeremulation.event.StoppingOrdersGenerationEvent;
 import com.company.customeremulation.infoboard.InfoService;
 import com.company.customeremulation.infoboard.OrdersInfo;
+import com.company.customeremulation.rabbit.RabbitMQService;
 import com.company.customeremulation.service.BackgroundOrdersStream;
 import com.company.customeremulation.service.OrderGenerator;
 import com.company.customeremulation.view.main.MainView;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -41,7 +40,7 @@ import java.util.Map;
 public class ControlPanelView extends StandardView {
     private static final Logger log = LoggerFactory.getLogger(ControlPanelView.class);
     private static BackgroundTaskHandler<Void> taskHandler;
-    private boolean isOrdersGeneratingOn;
+    private static boolean isOrdersGeneratingOn;
 
     @Autowired
     private Notifications notifications;
@@ -53,6 +52,8 @@ public class ControlPanelView extends StandardView {
     private InfoService infoService;
     @Autowired
     private OrderDtoService orderDtoService;
+    @Autowired
+    private RabbitMQService rabbitMQService;
 
     @ViewComponent
     private JmixButton startBtn;
@@ -104,18 +105,30 @@ public class ControlPanelView extends StandardView {
 
     @Subscribe(id = "startBtn", subject = "clickListener")
     public void onStartBtnClick(final ClickEvent<JmixButton> event) {
-        infoService.initOrderedItemsList();
-        BackgroundOrdersStream ordersStream = new BackgroundOrdersStream(60, orderGenerator);
-        taskHandler = backgroundWorker.handle(ordersStream);
-        taskHandler.execute();
-        startBtn.setEnabled(false);
-        stopBtn.setEnabled(true);
-        notifications.create("Orders generation started")
-                .withDuration(2000)
-                .withThemeVariant(NotificationVariant.LUMO_SUCCESS)
-                .show();
-        log.info("Orders generation started");
-        isOrdersGeneratingOn = true;
+        if (!rabbitMQService.isRabbitMqAvailable()) {
+            notifications.create("RabbitMQ is unavailable")
+                    .withType(Notifications.Type.ERROR)
+                    .show();
+        } else {
+            boolean result = infoService.initOrderedItemsList();
+            if (result) {
+                BackgroundOrdersStream ordersStream = new BackgroundOrdersStream(60, orderGenerator);
+                taskHandler = backgroundWorker.handle(ordersStream);
+                taskHandler.execute();
+                startBtn.setEnabled(false);
+                stopBtn.setEnabled(true);
+                notifications.create("Orders generation started")
+                        .withDuration(2000)
+                        .withThemeVariant(NotificationVariant.LUMO_SUCCESS)
+                        .show();
+                log.info("Orders generation started");
+                isOrdersGeneratingOn = true;
+            } else {
+                notifications.create("Order processing app is down. Items cannot be loaded from the REST datasource.")
+                        .withType(Notifications.Type.ERROR)
+                        .show();
+            }
+        }
     }
 
     @Subscribe(id = "stopBtn", subject = "clickListener")

@@ -1,6 +1,8 @@
 package com.company.customeremulation.app;
 
 import com.company.customeremulation.entity.OrderDto;
+import io.jmix.core.DataManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -28,5 +30,9 @@ public class OrderDtoService {
 
     public Integer getCount() {
         return orderDtos.size();
+    }
+
+    public void deleteAll() {
+        orderDtos.clear();
     }
 }

@@ -29,12 +29,17 @@ public class InfoService {
         return ordersInfoList;
     }
 
-    public void initOrderedItemsList() {
-        for (ItemDto itemDto : itemDtoRepository.findAll()) {
-            OrdersInfo orderedItem = new OrdersInfo(itemDto.getName(), 0,0);
-            ordersInfoList.add(orderedItem);
+    public boolean initOrderedItemsList() {
+        try {
+            for (ItemDto itemDto : itemDtoRepository.findAll()) {
+                OrdersInfo orderedItem = new OrdersInfo(itemDto.getName(), 0,0);
+                ordersInfoList.add(orderedItem);
+            }
+            log.info("Init ordered items list");
+            return true;
+        } catch (Exception e) {
+            return false;
         }
-        log.info("Init ordered items list");
     }
 
     public void countOrder(OrderDto order) {
