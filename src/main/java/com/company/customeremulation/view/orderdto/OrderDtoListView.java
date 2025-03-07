@@ -46,6 +46,4 @@ public class OrderDtoListView extends StandardListView<OrderDto> {
         orderDtoesDl.load();
     }
 
-
-
 }

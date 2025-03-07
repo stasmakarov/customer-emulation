@@ -7,10 +7,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
-//    @Bean
-//    public Queue writeQueue() {
-//        return new Queue("orders");
-//    }
 
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
