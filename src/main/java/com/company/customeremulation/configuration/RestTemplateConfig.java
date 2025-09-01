@@ -1,4 +1,4 @@
-package com.company.customeremulation.config;
+package com.company.customeremulation.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

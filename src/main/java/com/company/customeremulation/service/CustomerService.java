@@ -1,4 +1,5 @@
 package com.company.customeremulation.service;
+import com.company.customeremulation.configuration.WebinarConfig;
 import com.company.customeremulation.event.ServiceUnavailableEvent;
 import com.company.customeremulation.service.record.Customer;
 import com.company.customeremulation.service.record.Location;
@@ -19,11 +20,17 @@ public class CustomerService {
 
     private static final String RANDOM_RUSSIANS_API = "dWrUnYxCnBakMgAcSKlYiISLpZdsAw3LT8vlzANDZjSm_140737489973366";
     private static final String RANDOM_RUSSIAN_FIO = "https://api.randogram.ru/generateNames";
-    private static final String RANDOM_USER_API = "https://randomuser.me/api/";
+    private static final String RANDOM_USER_API = "https://randomuser.me/api/?nat=gb";
     private static boolean isRandomUserServiceAvailable;
 
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
+    @Autowired
+    private WebinarConfig webinarConfig;
+
+    public String generateCustomerName() {
+        return "GL".equals(webinarConfig.getRegion()) ? generateCustomer().name() : randomRussianName();
+    }
 
     public Customer generateCustomer() {
         RestTemplate restTemplate = new RestTemplate();
@@ -63,7 +70,7 @@ public class CustomerService {
         }
     }
 
-    public String randomRussianCustomer() {
+    public String randomRussianName() {
         Random random = new Random();
         int i = random.nextInt(0, RUSSIAN_NAMES.length - 1);
         return RUSSIAN_NAMES[i];
