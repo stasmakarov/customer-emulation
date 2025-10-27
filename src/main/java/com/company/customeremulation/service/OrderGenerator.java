@@ -62,7 +62,7 @@ public class OrderGenerator {
         String address;
         int count = customerSettings.getAttempts();
         do {
-            MapPoint point = addressService.randomPoint(isValidAddress());
+            MapPoint point = addressService.randomPoint(isFakeAddress());
             address = addressService.findAddress(point).orElse(null);
         } while (address == null && count-- > 0);
         return address;
@@ -85,13 +85,15 @@ public class OrderGenerator {
         return random.nextInt(1, maxItems);
     }
 
-    private boolean isValidAddress() {
+    private boolean isFakeAddress() {
         // clamp to [0..100] to avoid config mistakes
         int p = Math.max(0, Math.min(100, customerSettings.getFakeProbability()));
         // nextInt(100) -> 0..99, so:
         // p=0  -> always false
         // p=100-> always true
-        return java.util.concurrent.ThreadLocalRandom.current().nextInt(100) < p;
+        boolean result = java.util.concurrent.ThreadLocalRandom.current().nextInt(100) < p;
+        log.info("Result isFake is: " + result);
+        return result;
     }
 
 

@@ -156,10 +156,10 @@ public class AddressService {
 
     /**
      * Generate a random point either inside the bounding box or outside it within a buffer.
-     * @param inside if true – inside the bounding box; if false – outside within the buffer.
+     * @param outside if true – point will be out of the box using 100 kilometers buffer.
      */
-    public MapPoint randomPoint(boolean inside) {
-        if (!inside) {
+    public MapPoint randomPoint(boolean outside) {
+        if (outside) {
             return randomPointOutside(100_000); // 100 km buffer in meters
         } else {
             double randomLat = getRandomLatitude(webinarConfig.getMinLat(), webinarConfig.getMaxLat());

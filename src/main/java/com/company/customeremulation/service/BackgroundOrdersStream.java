@@ -20,7 +20,6 @@ public class BackgroundOrdersStream extends BackgroundTask<Integer, Void> {
 
     @Override
     public Void run(TaskLifeCycle taskLifeCycle) throws Exception {
-        int i = 0;
         while (!taskLifeCycle.isCancelled()) {
             OrderDto order = orderGenerator.generate();
             //noinspection unchecked
